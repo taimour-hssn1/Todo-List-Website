@@ -1,0 +1,58 @@
+{% extends 'todoapp/base.html' %}
+
+{% block title %}My To-Do List{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">My To-Do List</h2>
+                
+                <form method="POST" class="mb-4">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        {{ form.title }}
+                        <button type="submit" class="btn btn-primary">Add Task</button>
+                    </div>
+                </form>
+
+                <div class="list-group">
+                    {% for task in tasks %}
+                    <div class="list-group-item task-item d-flex justify-content-between align-items-center">
+                        <div>
+                            {% comment %} <span class="{% if task.completed %}completed{% endif %}"> {% endcomment %}
+                                {{ task.title }}
+                            {% comment %} </span> {% endcomment %}
+                            <span class="badge {% if task.completed %}bg-success{% else %}bg-warning{% endif %} ms-2">
+                                {% if task.completed %}Completed{% else %}Pending{% endif %}
+                            </span>
+                        </div>
+                        <div class="btn-group me-4">
+                            {% if not task.completed %}
+                            <form method="POST" action="{% url 'toggle' task.id %}" class="d-inline me-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-circle"></i> Complete
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form method="POST" action="{% url 'delete' task.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted">
+                        <p>No tasks yet. Add one above!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
